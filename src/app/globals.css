@@ -1,0 +1,152 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 0 0% 100%; /* Fallback for AccentColorSwitcher if not white */
+    --primary-foreground: 0 0% 12.9%; /* Fallback for AccentColorSwitcher if not white */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 0 0% 100%; /* Fallback for AccentColorSwitcher if not white */
+    --accent-foreground: 0 0% 12.9%; /* Fallback for AccentColorSwitcher if not white */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 0 0% 100%; /* Fallback for AccentColorSwitcher if not white */
+    --radius: 0.5rem;
+
+    --chart-1: 0 0% 100%; /* Fallback for AccentColorSwitcher if not white */
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Sidebar variables (can be kept for consistency or removed if sidebar is not used) */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 0 0% 18.8%; /* #303030 Dark Grey */
+    --foreground: 0 0% 87.8%; /* #E0E0E0 Light Grey */
+
+    --card: 0 0% 12.9%; /* #212121 Dark Blue (user's primary for calmness) */
+    --card-foreground: 0 0% 87.8%; /* #E0E0E0 Light Grey */
+
+    --popover: 0 0% 12.9%; /* Darker popovers */
+    --popover-foreground: 0 0% 87.8%;
+
+    --primary: 0 0% 100%; /* White - This will be overridden by AccentColorSwitcher */
+    --primary-foreground: 0 0% 12.9%; /* Dark Grey for white accent - This will be overridden by AccentColorSwitcher */
+
+    --secondary: 0 0% 25%; /* #404040 Slightly lighter grey for secondary elements */
+    --secondary-foreground: 0 0% 90%; /* #E5E5E5 */
+
+    --muted: 0 0% 14.5%; /* #252525 Dimmer elements */
+    --muted-foreground: 0 0% 62.7%; /* #A0A0A0 Dimmer text */
+
+    --accent: 0 0% 100%; /* White (for hovers, focus) - This will be overridden by AccentColorSwitcher */
+    --accent-foreground: 0 0% 12.9%; /* Dark Grey - This will be overridden by AccentColorSwitcher */
+
+    --destructive: 0 72% 51%; /* Standard Red */
+    --destructive-foreground: 0 0% 98%; /* White */
+
+    --border: 0 0% 25.9%; /* #424242 Subtle border */
+    --input: 0 0% 25.9%; /* #424242 Input background */
+    --ring: 0 0% 100%; /* White for focus rings - This will be overridden by AccentColorSwitcher */
+
+    --chart-1: 0 0% 100%; /* This will be overridden by AccentColorSwitcher */
+    --chart-2: 220 70% 50%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 30 80% 55%;
+    --chart-5: 280 65% 60%;
+
+    /* Sidebar variables (dark theme) */
+    --sidebar-background: 0 0% 10%; /* Darker sidebar */
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 0 0% 100%; /* White accents in sidebar */
+    --sidebar-primary-foreground: 0 0% 12.9%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
+}
+
+/* Custom scrollbar styles */
+@layer utilities {
+  .custom-styled-scroll-area > [data-orientation="vertical"] { /* This is the Scrollbar itself (track area) */
+    @apply !w-[5px] !bg-muted; /* Thinner scrollbar track (5px) and dark track */
+  }
+  .custom-styled-scroll-area > [data-orientation="vertical"] > [data-radix-scroll-area-thumb] { /* This is the Thumb */
+    @apply !bg-[hsl(var(--sidebar-background))]; /* Even darker scrollbar thumb using theme's sidebar-background color */
+  }
+
+  /* Hide scrollbar visually */
+  .custom-styled-scroll-area::-webkit-scrollbar,
+  .no-visual-scroll::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+  }
+
+  .custom-styled-scroll-area,
+  .no-visual-scroll {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+    scrollbar-color: transparent transparent; /* For some versions of Firefox */
+  }
+
+  /* UV Index Progress Bar Colors */
+  .uv-bar-low > div {
+    @apply !bg-green-500;
+  }
+ .uv-bar-moderate > div {
+    @apply !bg-yellow-500;
+  }
+  .uv-bar-high > div {
+    @apply !bg-red-500;
+  }
+
+  /* Hide scrollbar for ShadCN ScrollArea (if still needed for specific cases) */
+}
+
+@layer components {
+  .task-list-checkbox[data-state="checked"] {
+    background-color: var(--task-checkbox-checked-bg, hsl(var(--primary))) !important;
+    border-color: var(--task-checkbox-checked-border, hsl(var(--primary))) !important;
+    color: hsl(var(--primary-foreground)) !important; /* For the checkmark */
+  }
+  .task-list-checkbox[data-state="unchecked"] {
+    border-color: var(--task-checkbox-unchecked-border, hsl(var(--primary))) !important;
+  }
+}
