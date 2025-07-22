@@ -472,7 +472,7 @@ export default function LifeOSPage() {
                   {icalFeeds.length > 0 && (
                   <div className="mt-3">
                       <h4 className="text-sm font-medium text-muted-foreground mb-2">Active Calendar Feeds</h4>
-                      <ScrollArea className="h-[240px] pr-1">
+                      <ScrollArea className="pr-1">
                           <div className="space-y-3">
                               {icalFeeds.map((feed) => (
                               <Card key={feed.id} className="p-2.5 shadow-sm border bg-background">
