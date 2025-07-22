@@ -188,7 +188,7 @@ export function NewsWidget({ categories, setCategories }: NewsWidgetSettingsProp
                 </div>
             </Card>
             
-            <ScrollArea className="max-h-[400px] pr-1 custom-styled-scroll-area overflow-y-auto">
+            <ScrollArea className="pr-1 custom-styled-scroll-area overflow-y-auto">
                 <div className="space-y-3">
                 {categories.map((category) => (
                     <Card key={category.id} className="p-3 bg-muted/30">
