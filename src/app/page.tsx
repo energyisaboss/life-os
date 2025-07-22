@@ -527,7 +527,9 @@ export default function LifeOSPage() {
                                                 <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleRemoveIcalFeed(feed.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                                             </div>
                                         </div>
-                                        <span className="text-xs text-muted-foreground truncate">{feed.url}</span>
+                                        {/* Conditionally render URL */}                                        {editingIcalFeed?.id === feed.id && (
+                                            <span className="text-xs text-muted-foreground truncate">{feed.url}</span>
+                                        )}
                                     </div>
                                   )}
                               </Card>
