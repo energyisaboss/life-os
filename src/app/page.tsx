@@ -341,6 +341,12 @@ export default function LifeOSPage() {
 
   const handleSaveIcalFeedChanges = useCallback(() => {
     if (!editingIcalFeed) return;
+    
+    if (currentIcalEditData.color && !isValidHexColor(currentIcalEditData.color)) {
+      toast({ title: "Invalid Color", description: "Please enter a valid hex color code (e.g. #RRGGBB).", variant: "destructive" });
+      return;
+    }
+
     setIcalFeeds(prevFeeds =>
       prevFeeds.map(f =>
         f.id === editingIcalFeed.id ? { ...f, ...currentIcalEditData } : f
@@ -472,10 +478,44 @@ export default function LifeOSPage() {
                               <Card key={feed.id} className="p-2.5 shadow-sm border bg-background">
                                   {editingIcalFeed && editingIcalFeed.id === feed.id ? (
                                     <div className="space-y-2">
-                                        <Input value={currentIcalEditData.label} onChange={(e) => setCurrentIcalEditData(prev => ({...prev, label: e.target.value}))} />
-                                        <Input type="url" value={currentIcalEditData.url} onChange={(e) => setCurrentIcalEditData(prev => ({...prev, url: e.target.value}))} />
-                                        <Input type="color" value={currentIcalEditData.color} onChange={(e) => setCurrentIcalEditData(prev => ({...prev, color: e.target.value}))} />
-                                        <Button onClick={handleSaveIcalFeedChanges}>Save</Button>
+                                        <Label htmlFor={`edit-ical-label-${feed.id}`} className="text-xs">Label</Label>
+                                        <Input id={`edit-ical-label-${feed.id}`} value={currentIcalEditData.label} onChange={(e) => setCurrentIcalEditData(prev => ({...prev, label: e.target.value}))} />
+                                        <Label htmlFor={`edit-ical-url-${feed.id}`} className="text-xs">URL</Label>
+                                        <Input id={`edit-ical-url-${feed.id}`} type="url" value={currentIcalEditData.url} onChange={(e) => setCurrentIcalEditData(prev => ({...prev, url: e.target.value}))} />
+                                        
+                                        <div>
+                                            <Label className="text-xs flex items-center mb-1.5">
+                                                <Palette size={14} className="mr-1.5 text-muted-foreground" /> Feed Color
+                                            </Label>
+                                            <div className="flex flex-wrap items-center gap-1.5">
+                                                {predefinedCalendarColors.map(colorOption => (
+                                                    <button
+                                                        key={colorOption.value}
+                                                        type="button"
+                                                        title={colorOption.name}
+                                                        className={cn(
+                                                            "w-5 h-5 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
+                                                            currentIcalEditData.color === colorOption.value ? "border-foreground" : "border-transparent hover:border-muted-foreground/50"
+                                                        )}
+                                                        style={{ backgroundColor: colorOption.value }}
+                                                        onClick={() => setCurrentIcalEditData(prev => ({...prev, color: colorOption.value}))}
+                                                    />
+                                                ))}
+                                                <Input
+                                                    type="text"
+                                                    placeholder="#HEX"
+                                                    value={currentIcalEditData.color || ''}
+                                                    onChange={(e) => setCurrentIcalEditData(prev => ({...prev, color: e.target.value}))}
+                                                    className={cn(
+                                                        "h-7 w-20 text-xs",
+                                                        currentIcalEditData.color && !isValidHexColor(currentIcalEditData.color) && currentIcalEditData.color !== '' ? "border-destructive focus-visible:ring-destructive" : ""
+                                                    )}
+                                                    maxLength={7}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <Button onClick={handleSaveIcalFeedChanges} disabled={currentIcalEditData.color !== '' && !isValidHexColor(currentIcalEditData.color)}>Save</Button>
                                         <Button variant="outline" onClick={handleCancelEditIcalFeed}>Cancel</Button>
                                     </div>
                                   ) : (
