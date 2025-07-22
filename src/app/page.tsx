@@ -177,22 +177,10 @@ export default function LifeOSPage() {
   }, [isClient]);
 
   useEffect(() => {
-      if(isClient) {
-          const handleStorageChange = (event: StorageEvent) => {
-              if (event.key === NEWS_CATEGORIES_STORAGE_KEY) {
-                  try {
-                    const newCategories = event.newValue ? JSON.parse(event.newValue) : [];
-                    setNewsCategories(newCategories);
-                  } catch(e) {
-                      console.error("Error updating news categories from storage event", e);
-                  }
-              }
-          };
-
-          window.addEventListener('storage', handleStorageChange);
-          return () => window.removeEventListener('storage', handleStorageChange);
-      }
-  }, [isClient]);
+    if (isClient) {
+      localStorage.setItem(NEWS_CATEGORIES_STORAGE_KEY, JSON.stringify(newsCategories));
+    }
+  }, [newsCategories, isClient]);
 
 
   useEffect(() => {
@@ -544,7 +532,7 @@ export default function LifeOSPage() {
               <AccordionItem value="news-settings">
                 <AccordionTrigger className="text-lg font-semibold hover:no-underline">News Settings</AccordionTrigger>
                 <AccordionContent>
-                  <NewsWidget />
+                  <NewsWidget categories={newsCategories} setCategories={setNewsCategories} />
                 </AccordionContent>
               </AccordionItem>
 

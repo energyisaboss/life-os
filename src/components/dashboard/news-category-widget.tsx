@@ -25,75 +25,75 @@ export function NewsCategoryWidget({ category }: NewsCategoryWidgetProps) {
   const [error, setError] = useState<string | null>(null);
   const [isClientLoaded, setIsClientLoaded] = useState(false);
 
-  const fetchAndProcessFeeds = useCallback(async () => {
-    if (!isClientLoaded || !category || category.feeds.length === 0) {
-      setArticles([]);
-      setIsLoading(false);
-      setError(null);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    let collectedErrorMessages: string[] = [];
-
-    const articlePromises = category.feeds.map(async (feed) => {
-      try {
-        const result = await processRssFeed({ rssFeedUrl: feed.url });
-        return result.articles.map(article => ({
-          ...article,
-          sourceName: feed.userLabel || result.sourceName,
-          id: `${feed.id}-${article.link || article.title || article.isoDate || Math.random()}`,
-        }));
-      } catch (err) {
-        let detail = "Failed to fetch or parse feed.";
-        if (err instanceof Error) {
-          detail = `Error for ${feed.userLabel || 'feed'}: ${err.message}`;
-        }
-        collectedErrorMessages.push(detail);
-        return [];
-      }
-    });
-
-    const results = await Promise.allSettled(articlePromises);
-
-    let fetchedArticles: AppNewsArticle[] = [];
-    results.forEach(result => {
-      if (result.status === 'fulfilled' && Array.isArray(result.value)) {
-        fetchedArticles.push(...result.value as AppNewsArticle[]);
-      }
-    });
-
-    fetchedArticles.sort((a, b) => {
-      if (a.isoDate && b.isoDate) return new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime();
-      return 0;
-    });
-
-    setArticles(fetchedArticles.slice(0, MAX_ARTICLES_DISPLAY_TOTAL));
-
-    if (collectedErrorMessages.length > 0) {
-      const fullErrorMessage = collectedErrorMessages.join('; ');
-      setError(fullErrorMessage);
-      toast({
-        title: `RSS Feed Issues in ${category.name}`,
-        description: fullErrorMessage.substring(0, 100) + '...',
-        variant: "destructive",
-        duration: 8000,
-      });
-    }
-
-    setIsLoading(false);
-  }, [category, isClientLoaded]);
-
   useEffect(() => {
     setIsClientLoaded(true);
   }, []);
 
   useEffect(() => {
+    const fetchAndProcessFeeds = async () => {
+      if (!category || category.feeds.length === 0) {
+        setArticles([]);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      let collectedErrorMessages: string[] = [];
+
+      const articlePromises = category.feeds.map(async (feed) => {
+        try {
+          const result = await processRssFeed({ rssFeedUrl: feed.url });
+          return result.articles.map(article => ({
+            ...article,
+            sourceName: feed.userLabel || result.sourceName,
+            id: `${feed.id}-${article.link || article.title || article.isoDate || Math.random()}`,
+          }));
+        } catch (err) {
+          let detail = "Failed to fetch or parse feed.";
+          if (err instanceof Error) {
+            detail = `Error for ${feed.userLabel || 'feed'}: ${err.message}`;
+          }
+          collectedErrorMessages.push(detail);
+          return [];
+        }
+      });
+
+      const results = await Promise.allSettled(articlePromises);
+
+      let fetchedArticles: AppNewsArticle[] = [];
+      results.forEach(result => {
+        if (result.status === 'fulfilled' && Array.isArray(result.value)) {
+          fetchedArticles.push(...result.value as AppNewsArticle[]);
+        }
+      });
+
+      fetchedArticles.sort((a, b) => {
+        if (a.isoDate && b.isoDate) return new Date(b.isoDate).getTime() - new Date(a.isoDate).getTime();
+        return 0;
+      });
+
+      setArticles(fetchedArticles.slice(0, MAX_ARTICLES_DISPLAY_TOTAL));
+
+      if (collectedErrorMessages.length > 0) {
+        const fullErrorMessage = collectedErrorMessages.join('; ');
+        setError(fullErrorMessage);
+        toast({
+          title: `RSS Feed Issues in ${category.name}`,
+          description: fullErrorMessage.substring(0, 100) + '...',
+          variant: "destructive",
+          duration: 8000,
+        });
+      }
+
+      setIsLoading(false);
+    };
+
     if (isClientLoaded) {
       fetchAndProcessFeeds();
     }
-  }, [isClientLoaded, category, fetchAndProcessFeeds]);
+  }, [category, isClientLoaded]);
 
   const isValidHexColor = (color: string) => /^#([0-9A-F]{3}){1,2}$/i.test(color);
   const categoryColor = (category.color && isValidHexColor(category.color)) ? category.color : 'hsl(var(--border))';
@@ -138,16 +138,15 @@ export function NewsCategoryWidget({ category }: NewsCategoryWidgetProps) {
                     <h4 className="font-medium text-card-foreground leading-tight">{article.title || 'Untitled Article'}</h4>
                   </a>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {article.sourceName} 
-                    {article.isoDate && ` - ${formatDistanceToNow(new Date(article.isoDate), { addSuffix: true })}`}
+                    {article.isoDate && `${formatDistanceToNow(new Date(article.isoDate), { addSuffix: true })}`}
                   </p>
                   {article.contentSnippet && (
                     <p className="text-sm text-muted-foreground mt-1.5 line-clamp-3">{article.contentSnippet}</p>
                   )}
-                  {article.category && (
+                  {article.sourceName && (
                     <Badge variant="secondary" className="mt-2 text-xs">
                       <Tag className="w-3 h-3 mr-1" />
-                      {article.category}
+                      {article.sourceName}
                     </Badge>
                   )}
                 </li>

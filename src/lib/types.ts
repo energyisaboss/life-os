@@ -22,6 +22,7 @@ export interface NewsCategory {
   feeds: RssFeedSource[];
   isEditingName?: boolean;
   color: string;
+  version?: number; // Added version property
 }
 
 export interface CalendarEvent {
