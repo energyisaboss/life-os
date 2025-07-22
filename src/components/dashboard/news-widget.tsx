@@ -97,7 +97,7 @@ export function NewsWidget({ categories, setCategories }: NewsWidgetSettingsProp
         ? { ...cat, name: newName, isEditingName: false, color: currentEditState.color, version: (cat.version || 0) + 1 } 
         : cat
     ));
-    toast({ title: "Category Name Updated" });
+    toast({ title: "News Feed Updated" });
   }, [editingCategoryState, setCategories]);
 
   const handleCancelEditCategoryName = (categoryId: string) => {
