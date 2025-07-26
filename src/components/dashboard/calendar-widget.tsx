@@ -1,7 +1,6 @@
-
 "use client";
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { CalendarDays, Loader2, AlertCircle } from 'lucide-react';
 import type { CalendarEvent as AppCalendarEvent, IcalFeedItem } from '@/lib/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -22,6 +21,7 @@ export function CalendarWidget({ feed }: CalendarWidgetProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClientLoaded, setIsClientLoaded] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchAndProcessSingleFeed = useCallback(async () => {
     if (!isClientLoaded || !feed || !feed.url.trim()) {
@@ -67,8 +67,23 @@ export function CalendarWidget({ feed }: CalendarWidgetProps) {
   useEffect(() => {
     if (isClientLoaded && feed && feed.url) {
       fetchAndProcessSingleFeed();
+
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      
+      intervalRef.current = setInterval(() => {
+        console.log(`CalendarWidget: Auto-refreshing feed: ${feed.label} (${feed.id})`);
+        fetchAndProcessSingleFeed();
+      }, 30000); // 30 seconds
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClientLoaded, feed, fetchAndProcessSingleFeed]); // fetchAndProcessSingleFeed is memoized
 
   const formatEventTime = (event: AppCalendarEvent) => {
