@@ -112,6 +112,7 @@ const TaskListContent: React.FC<TaskListContentProps> = ({ settingsOpen, display
 
   const [isGapiClientLoaded, setIsGapiClientLoaded] = useState(false);
 
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -340,6 +341,26 @@ const TaskListContent: React.FC<TaskListContentProps> = ({ settingsOpen, display
         });
     }
   }, [listSettings, accessToken, isGapiClientLoaded, taskLists, tasksByListId, isLoadingTasksForList, fetchAndSetTasksForList]);
+
+  useEffect(() => {
+    // Set up the interval to refresh tasks every 30 seconds
+    intervalRef.current = setInterval(() => {
+      console.log('TaskListWidget: Auto-refreshing tasks for visible lists.');
+      // Iterate over visible lists and fetch tasks for each
+      taskLists.forEach(list => {
+        if (listSettings[list.id]?.visible && accessToken && isGapiClientLoaded) {
+          fetchAndSetTasksForList(accessToken, list.id);
+        }
+      });
+    }, 30000); // 30 seconds
+
+    // Clean up the interval when the component unmounts or dependencies change
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [accessToken, isGapiClientLoaded, taskLists, listSettings, fetchAndSetTasksForList]); // Add dependencies
 
 
   const handleLoginSuccess = useCallback((tokenResponse: Omit<TokenResponse, 'error' | 'error_description' | 'error_uri'>) => {
