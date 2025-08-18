@@ -34,7 +34,7 @@ const ICAL_FEEDS_STORAGE_KEY_PAGE = 'pageIcalFeedsLifeOS_v1';
 const CALENDAR_WIDGET_ID_PREFIX = 'calendar-feed-';
 const NEWS_CATEGORY_WIDGET_ID_PREFIX = 'news-category-';
 
-const MAX_ICAL_FEEDS_PAGE = 10;
+const MAX_ICAL_FEEDS_PAGE = 15;
 
 interface StaticWidgetConfig {
   id: string;
